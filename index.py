@@ -31,7 +31,8 @@ async def api(request: Request):
     if key == "key":
         return JSONResponse({"success": False, "reason": "All available keys are ratelimited!"}, status_code=429)
     hypixelResp = requests.get("https://api.hypixel.net" + request.url.path + "?key=" + key + "&" + request.url.query)
-    hypixelResp.headers.pop("Content-Encoding")
+    if "Content-Encoding" in hypixelResp.headers.keys():
+        hypixelResp.headers.pop("Content-Encoding")
     setKey(int(hypixelResp.headers["ratelimit-remaining"]), int(hypixelResp.headers["ratelimit-reset"]))
     resp = JSONResponse(hypixelResp.json(), hypixelResp.status_code, hypixelResp.headers)
     return resp
