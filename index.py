@@ -18,8 +18,15 @@ def status():
     return "OK"
 
 
+@app.get("/favicon.ico")
+def icon():
+    return JSONResponse(None, status_code=404)
+
+
 @app.get("/", description="All requests will be redirected to official Hypixel API", summary="Hypixel API")
 async def api(request: Request):
+    if request.url.path == "/key":
+        return JSONResponse({}, status_code=404)
     key = getKey()
     if key == "key":
         return JSONResponse({"success": False, "reason": "All available keys are ratelimited!"}, status_code=429)
