@@ -33,7 +33,8 @@ async def api(request: Request):
     hypixelResp = requests.get("https://api.hypixel.net" + request.url.path + "?key=" + key + "&" + request.url.query)
     if "Content-Encoding" in hypixelResp.headers.keys():
         hypixelResp.headers.pop("Content-Encoding")
-    setKey(int(hypixelResp.headers["ratelimit-remaining"]), int(hypixelResp.headers["ratelimit-reset"]))
+    if "ratelimit-remaining" in hypixelResp.headers.keys():
+        setKey(int(hypixelResp.headers["ratelimit-remaining"]), int(hypixelResp.headers["ratelimit-reset"]))
     resp = JSONResponse(hypixelResp.json(), hypixelResp.status_code, hypixelResp.headers)
     return resp
 
